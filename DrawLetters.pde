@@ -15,48 +15,47 @@ import processing.svg.*;
 public void settings()
   {  
      System.setProperty("jogl.disable.openglcore", "false");
-  size(1200, 1000);
+  size(1300, 1000);
   }
 
 void setup() {
-  size(1200, 1000);
+  //size(1200, 1000);
   stroke(255);
   background(0,0,0,0);
-  frameRate(20);
+  frameRate(10);
   for(String c : letters){
     Letter temp=new Letter(loadData(c));
     Alphabet.add(temp);
   }
+
+ 
 }
 
 void draw() {
-  // Transparent Background  
-  fill(0,0,0,50);
-  rect(0,0,width+20,height+20);
-  noFill();
+  strokeWeight(0);
+  //transBack(100);
+
+  background(0);
    
   if (record) {
     beginRecord(SVG, "output" + millis() + ".svg");
   }
   
- 
+  float scale=0.3;
+  float amount=5;
+  Grille(scale,amount);
   
-  ////NoiseDance
+  //NoiseDance
   //float scale=0.05;
   //float amount=15;
   //float nfreq=0.002;
   //noiseDance(scale,amount,nfreq);
   
-  
-  ////Draw Word
-  //for (int i=0;i<10;i+=1){
-  //pushMatrix();
-  //float y=100*i;
-  //float spacex=100;
-  //translate(0,y);
-  //DrawWord("Arnaud",scale,spacex,y);
-  //popMatrix();
-  //}
+
+  //translate(0,height/2);
+  //float scale=0.4;
+  //float spacex=220;
+  //DrawWord("Wooble",scale,spacex,0);
   
   if (record) {
     endRecord();
@@ -73,7 +72,8 @@ void DrawWord(String Word,float scale,float spacex,float y){
     pushMatrix();
     translate(spacex*i,0);
     Letter letter=new Letter(loadData(str(Word.charAt(i))));
-    letter.DrawNoisy(scale,step,i,y);
+    //letter.DrawNoisy(scale,step,i,y);
+    letter.DrawShape(scale,0,y);
     popMatrix();
   }
 }
@@ -87,17 +87,29 @@ void noiseDance(float scale,float amount,float nfreq){
     float x=map(j,0,amount,0,width)+map(random(1),0,1,-amptemp,amptemp);
     float y=map(k,0,amount,0,height)+map(random(1),0,1,-amptemp,amptemp);
     float n=noise(x*nfreq,y*nfreq,t);
-    pushMatrix();
-    translate(x,y);
+
     int p = (int) random(letters.length);
      
     if(n<0.3){
-      //DrawLetter(points,scale,j,k);
        Alphabet.get(p).DrawNoisy(scale,step,x,y);
-    
     }
     
-    popMatrix();
+    }
+  }
+}
+
+void Grille(float scale,float amount){
+
+  for (int j=0;j<amount;j+=1){
+    for(int k=0;k<amount;k+=1){
+    
+    float x=map(j,0,amount,0,width);
+    float y=map(k,0,amount,0,height);
+ 
+    //int p = (int) random(letters.length);
+    int p = j+k;
+    Alphabet.get(p).DrawShape(scale,x,y);
+    
     }
   }
 }
@@ -133,6 +145,12 @@ void saveFrames(){
   if(counter>100){
     exit();
   }
+}
+
+void transBack(float trans){
+  fill(0,0,0,trans);
+  rect(0,0,width+20,height+20);
+  noFill();
 }
 
 
